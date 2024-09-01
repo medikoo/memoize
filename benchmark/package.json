@@ -1,0 +1,8 @@
+{
+	"devDependencies": {
+		"lodash": "4.17.21",
+		"secondary-cache": "2.0.0",
+		"lru-cache": "11.0.0",
+		"underscore": "1.13.7"
+	}
+}

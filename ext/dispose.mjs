@@ -1,16 +1,16 @@
 // Call dispose callback on each cache purge
 
-"use strict";
+import callable from "es5-ext/object/valid-callable.js";
+import forEach from "es5-ext/object/for-each.js";
+import async from "./async.mjs";
+import promise from "./promise.mjs";
 
-var callable   = require("es5-ext/object/valid-callable")
-  , forEach    = require("es5-ext/object/for-each")
-  , extensions = require("../lib/registered-extensions")
-  , apply      = Function.prototype.apply;
+var apply = Function.prototype.apply;
 
-extensions.dispose = function (dispose, conf, options) {
+export default function disposeExtension(dispose, conf, options) {
 	var del;
 	callable(dispose);
-	if ((options.async && extensions.async) || (options.promise && extensions.promise)) {
+	if ((options.async && async) || (options.promise && promise)) {
 		conf.on(
 			"deleteasync",
 			(del = function (id, resultArray) { apply.call(dispose, null, resultArray); })
@@ -24,4 +24,4 @@ extensions.dispose = function (dispose, conf, options) {
 	conf.on("clear", function (cache) {
 		forEach(cache, function (result, id) { del(id, result); });
 	});
-};
+}

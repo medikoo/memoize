@@ -53,6 +53,25 @@ memoized("foo", 3, "bar");
 memoized("foo", 3, "bar"); // Cache hit
 ```
 
+or via EsModules
+
+```js
+import memoize from "memoizee";
+
+function fn(one, two, three) {
+  /* ... */
+}
+
+async function main() {
+  memoized = await memoize(fn);
+
+  memoized("foo", 3, "bar");
+  memoized("foo", 3, "bar"); // Cache hit
+}
+
+main();
+```
+
 **Note**: Invocations that throw exceptions are not cached.
 
 ### Configuration

@@ -1,9 +1,7 @@
-"use strict";
+import indexOf from "es5-ext/array/%23/e-index-of.js";
+var create = Object.create;
 
-var indexOf = require("es5-ext/array/#/e-index-of")
-  , create  = Object.create;
-
-module.exports = function (length) {
+export default function getFixed(length) {
 	var lastId = 0, map = [[], []], cache = create(null);
 	return {
 		get: function (args) {
@@ -14,7 +12,7 @@ module.exports = function (length) {
 				set = set[1][i];
 				++index;
 			}
-			i = indexOf.call(set[0], args[index]);
+			i = call(set[0], args[index]);
 			if (i === -1) return null;
 			return set[1][i] || null;
 		},
@@ -68,4 +66,4 @@ module.exports = function (length) {
 			cache = create(null);
 		},
 	};
-};
+}

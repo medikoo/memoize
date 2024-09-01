@@ -1,22 +1,18 @@
 // Limit cache size, LRU (least recently used) algorithm.
 
-"use strict";
+import toPosInteger from "es5-ext/number/to-pos-integer.js";
+import lruQueue from "lru-queue";
+import async from "./async.mjs";
+import promise from "./promise.mjs";
 
-var toPosInteger = require("es5-ext/number/to-pos-integer")
-  , lruQueue     = require("lru-queue")
-  , extensions   = require("../lib/registered-extensions");
-
-extensions.max = function (max, conf, options) {
+export default function maxExtension(max, conf, options) {
 	var postfix, queue, hit;
 
 	max = toPosInteger(max);
 	if (!max) return;
 
 	queue = lruQueue(max);
-	postfix =
-		(options.async && extensions.async) || (options.promise && extensions.promise)
-			? "async"
-			: "";
+	postfix = (options.async && async) || (options.promise && promise) ? "async" : "";
 
 	conf.on(
 		"set" + postfix,
@@ -29,4 +25,4 @@ extensions.max = function (max, conf, options) {
 	conf.on("get" + postfix, hit);
 	conf.on("delete" + postfix, queue.delete);
 	conf.on("clear" + postfix, queue.clear);
-};
+}

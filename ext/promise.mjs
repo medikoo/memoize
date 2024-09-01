@@ -2,19 +2,17 @@
 
 // Support for functions returning promise
 
-"use strict";
-
-var objectMap     = require("es5-ext/object/map")
-  , primitiveSet  = require("es5-ext/object/primitive-set")
-  , ensureString  = require("es5-ext/object/validate-stringifiable-value")
-  , toShortString = require("es5-ext/to-short-string-representation")
-  , isPromise     = require("is-promise")
-  , nextTick      = require("next-tick");
+import objectMap from "es5-ext/object/map.js";
+import primitiveSet from "es5-ext/object/primitive-set.js";
+import ensureString from "es5-ext/object/validate-stringifiable-value.js";
+import toShortString from "es5-ext/to-short-string-representation.js";
+import isPromise from "is-promise";
+import nextTick from "next-tick";
 
 var create = Object.create
   , supportedModes = primitiveSet("then", "then:finally", "done", "done:finally");
 
-require("../lib/registered-extensions").promise = function (mode, conf) {
+export default function promiseExtension(mode, conf) {
 	var waiting = create(null), cache = create(null), promises = create(null);
 
 	if (mode === true) {
@@ -144,4 +142,4 @@ require("../lib/registered-extensions").promise = function (mode, conf) {
 		promises = create(null);
 		conf.emit("clearasync", objectMap(oldCache, function (data) { return [data]; }));
 	});
-};
+}

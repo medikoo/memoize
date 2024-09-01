@@ -1,8 +1,6 @@
-"use strict";
+import indexOf from "es5-ext/array/%23/e-index-of.js";
 
-var indexOf = require("es5-ext/array/#/e-index-of");
-
-module.exports = function () {
+export default function get1() {
 	var lastId = 0, argsMap = [], cache = [];
 	return {
 		get: function (args) {
@@ -26,4 +24,4 @@ module.exports = function () {
 			cache = [];
 		},
 	};
-};
+}

@@ -1,13 +1,11 @@
-// Gathers statistical data, and provides them in convinient form
+// Gathers statistical data, and provides them in convenient form
 
-"use strict";
-
-var partial = require("es5-ext/function/#/partial")
-  , forEach = require("es5-ext/object/for-each")
-  , pad     = require("es5-ext/string/#/pad")
-  , compact = require("es5-ext/array/#/compact")
-  , d       = require("d")
-  , memoize = require("./plain");
+import partial from "es5-ext/function/%23/partial.js";
+import forEach from "es5-ext/object/for-each.js";
+import pad from "es5-ext/string/%23/pad.js";
+import compact from "es5-ext/array/%23/compact.js";
+import d from "d";
+import memoize from "./plain.mjs";
 
 var max = Math.max, stats = (exports.statistics = {});
 
@@ -41,7 +39,7 @@ Object.defineProperty(
 	})
 );
 
-exports.log = function () {
+export function log() {
 	var initial, cached, ordered, ipad, cpad, ppad, toPrc, log;
 
 	initial = cached = 0;
@@ -106,4 +104,4 @@ exports.log = function () {
 	});
 	log += "------------------------------------------------------------\n";
 	return log;
-};
+}

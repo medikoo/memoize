@@ -1,6 +1,4 @@
-"use strict";
-
-module.exports = function (length) {
+export default function getPrimitiveFixed(length) {
 	if (!length) {
 		return function () { return ""; };
 	}
@@ -11,4 +9,4 @@ module.exports = function (length) {
 		}
 		return id;
 	};
-};
+}

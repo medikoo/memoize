@@ -21,17 +21,38 @@
 		"async"
 	],
 	"repository": "medikoo/memoizee",
+	"type": "commonjs",
+	"exports": {
+		".": {
+			"import": "./index.mjs",
+			"require": "./index.js"
+		},
+		"./*": {
+			"import": "./*.mjs",
+			"require": "./*.js"
+		}
+	},
 	"dependencies": {
 		"d": "^1.0.2",
 		"es5-ext": "^0.10.64",
 		"es6-weak-map": "^2.0.3",
 		"event-emitter": "^0.3.5",
 		"is-promise": "^2.2.2",
+		"lodash": "^4.17.21",
+		"lru-cache": "^11.0.0",
 		"lru-queue": "^0.1.0",
 		"next-tick": "^1.1.0",
-		"timers-ext": "^0.1.7"
+		"secondary-cache": "^2.0.0",
+		"timers-ext": "^0.1.7",
+		"underscore": "^1.13.7"
 	},
 	"devDependencies": {
+		"@babel/cli": "^7.25.6",
+		"@babel/core": "^7.25.2",
+		"@babel/preset-env": "^7.25.4",
+		"babel-plugin-add-module-exports": "^1.0.4",
+		"babel-plugin-transform-rewrite-imports": "1.2.0",
+		"babel-plugin-replace-import-extension": "^1.1.4",
 		"bluebird": "^3.7.2",
 		"eslint": "^8.57.0",
 		"eslint-config-medikoo": "^4.2.0",
@@ -98,6 +119,7 @@
 		]
 	},
 	"scripts": {
+		"build": "babel --out-file-extension .js -d ./ ./*.mjs --ignore ./index.mjs && babel --out-file-extension .js -d ./lib ./lib/*.mjs && babel --out-file-extension .js -d ./ext ./ext/*.mjs && babel --out-file-extension .js -d ./normalizers ./normalizers/*.mjs",
 		"coverage": "nyc npm test",
 		"lint": "eslint --ignore-path=.gitignore .",
 		"lint:updated": "pipe-git-updated --base=main --ext=js -- eslint --ignore-pattern '!*'",
@@ -105,10 +127,43 @@
 		"prettier-check:updated": "pipe-git-updated --base=main --ext=css --ext=html --ext=js --ext=json --ext=md --ext=yaml --ext=yml -- prettier -c",
 		"prettify": "prettier --write --ignore-path .gitignore \"**/*.{css,html,js,json,md,yaml,yml}\"",
 		"prettify:updated": "pipe-git-updated ---base=main -ext=css --ext=html --ext=js --ext=json --ext=md --ext=yaml --ext=yml -- prettier --write",
-		"test": "tad"
+		"test": "npm run build && tad"
 	},
 	"engines": {
 		"node": ">=0.12"
+	},
+	"babel": {
+		"presets": [
+			[
+				"@babel/env",
+				{
+					"targets": {
+						"node": "0.12"
+					}
+				}
+			]
+		],
+		"plugins": [
+			"babel-plugin-add-module-exports",
+			[
+				"babel-plugin-transform-rewrite-imports",
+				{
+					"replaceExtensions": {
+						"^es5-ext/array/%23/e-index-of.js$": "es5-ext/array/#/e-index-of.js",
+						"^es5-ext/string/%23/pad.js$": "es5-ext/string/#/pad.js",
+						"^es5-ext/function/%23/partial.js$": "es5-ext/function/#/partial.js"
+					}
+				}
+			],
+			[
+				"babel-plugin-replace-import-extension",
+				{
+					"extMapping": {
+						".mjs": ".js"
+					}
+				}
+			]
+		]
 	},
 	"license": "ISC"
 }

@@ -2,28 +2,24 @@
 
 // Timeout cached values
 
-"use strict";
-
-var aFrom      = require("es5-ext/array/from")
-  , forEach    = require("es5-ext/object/for-each")
-  , nextTick   = require("next-tick")
-  , isPromise  = require("is-promise")
-  , timeout    = require("timers-ext/valid-timeout")
-  , extensions = require("../lib/registered-extensions");
+import aFrom from "es5-ext/array/from/index.js";
+import forEach from "es5-ext/object/for-each.js";
+import nextTick from "next-tick";
+import isPromise from "is-promise";
+import timeout from "timers-ext/valid-timeout.js";
+import async from "./async.mjs";
+import promise from "./promise.mjs";
 
 var noop = Function.prototype, max = Math.max, min = Math.min, create = Object.create;
 
-extensions.maxAge = function (maxAge, conf, options) {
+export default function maxAgeExtension(maxAge, conf, options) {
 	var timeouts, postfix, preFetchAge, preFetchTimeouts;
 
 	maxAge = timeout(maxAge);
 	if (!maxAge) return;
 
 	timeouts = create(null);
-	postfix =
-		(options.async && extensions.async) || (options.promise && extensions.promise)
-			? "async"
-			: "";
+	postfix = (options.async && async) || (options.promise && promise) ? "async" : "";
 	conf.on("set" + postfix, function (id) {
 		timeouts[id] = setTimeout(function () { conf.delete(id); }, maxAge);
 		if (typeof timeouts[id].unref === "function") timeouts[id].unref();
@@ -55,7 +51,7 @@ extensions.maxAge = function (maxAge, conf, options) {
 			preFetchAge = (1 - preFetchAge) * maxAge;
 			conf.on("get" + postfix, function (id, args, context) {
 				if (!preFetchTimeouts[id]) {
-					preFetchTimeouts[id] = "nextTick";
+					preFetchTimeouts[id] = "nextTick.js";
 					nextTick(function () {
 						var result;
 						if (preFetchTimeouts[id] !== "nextTick") return;
@@ -87,4 +83,4 @@ extensions.maxAge = function (maxAge, conf, options) {
 			preFetchTimeouts = {};
 		}
 	});
-};
+}

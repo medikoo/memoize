@@ -2,17 +2,15 @@
 
 // Support for asynchronous functions
 
-"use strict";
-
-var aFrom        = require("es5-ext/array/from")
-  , objectMap    = require("es5-ext/object/map")
-  , mixin        = require("es5-ext/object/mixin")
-  , defineLength = require("es5-ext/function/_define-length")
-  , nextTick     = require("next-tick");
+import aFrom from "es5-ext/array/from/index.js";
+import objectMap from "es5-ext/object/map.js";
+import mixin from "es5-ext/object/mixin.js";
+import defineLength from "es5-ext/function/_define-length.js";
+import nextTick from "next-tick";
 
 var slice = Array.prototype.slice, apply = Function.prototype.apply, create = Object.create;
 
-require("../lib/registered-extensions").async = function (tbi, conf) {
+export default function asyncExtension(tbi, conf) {
 	var waiting = create(null)
 	  , cache = create(null)
 	  , base = conf.memoized
@@ -151,4 +149,4 @@ require("../lib/registered-extensions").async = function (tbi, conf) {
 			"clearasync", objectMap(oldCache, function (data) { return slice.call(data.args, 1); })
 		);
 	});
-};
+}

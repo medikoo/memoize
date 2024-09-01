@@ -1,12 +1,10 @@
 /* eslint max-statements: 0 */
 
-"use strict";
-
-var indexOf = require("es5-ext/array/#/e-index-of");
+import indexOf from "es5-ext/array/%23/e-index-of.js";
 
 var create = Object.create;
 
-module.exports = function () {
+export default function get() {
 	var lastId = 0, map = [], cache = create(null);
 	return {
 		get: function (args) {
@@ -87,4 +85,4 @@ module.exports = function () {
 			cache = create(null);
 		},
 	};
-};
+}

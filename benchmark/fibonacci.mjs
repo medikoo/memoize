@@ -1,39 +1,38 @@
 /* global console */
 /* eslint no-console: 0, id-length: 0 */
 
-"use strict";
-
 // Simple benchmark for very simple memoization case (fibonacci series)
 // To run it, do following in memoizee package path:
 //
-// $ npm install underscore lodash lru-cache secondary-cache
-// $ node benchmark/fibonacci.js
+// $ cd benchmark && npm install && cd ..
+// $ node benchmark/fibonacci.mjs
 
-var forEach      = require("es5-ext/object/for-each")
-  , pad          = require("es5-ext/string/#/pad")
-  , memoizee     = require("..")
-  , underscore   = require("underscore").memoize
-  , lodash       = require("lodash").memoize
-  , lruCache     = require("lru-cache")
-  , lruSecondary = require("secondary-cache/lib/lru-cache");
+import forEach from "es5-ext/object/for-each.js";
+import pad from "es5-ext/string/%23/pad.js";
+import memoizee from "../index.mjs";
+import { memoize as underscore } from "underscore";
+import lodash from "lodash/memoize.js";
+import * as lruCache from "lru-cache";
+import { Cache as lruSecondaryCache } from "secondary-cache";
 
-var now = Date.now
-  , time
-  , getFib
-  , lru
-  , memo
-  , total
-  , index = 3000
-  , count = 10
-  , i
-  , lruMax = 1000
-  , data = {}
-  , lruObj;
+var now = Date.now,
+	time,
+	lru,
+	memo,
+	total,
+	index = 3000,
+	count = 10,
+	i,
+	lruMax = 1000,
+	data = {},
+	lruObj;
 
-getFib = function (memoize, opts) {
-	var fib = memoize(function (x) { return x < 2 ? 1 : fib(x - 1) + fib(x - 2); }, opts);
+async function getFib(memoize, opts) {
+	const fib = await memoize(function (x) {
+		return x < 2 ? 1 : fib(x - 1) + fib(x - 2);
+	}, opts);
 	return fib;
-};
+}
 
 lru = function (x) {
 	var value = lruObj.get(x);
@@ -48,8 +47,8 @@ console.log("Fibonacci", index, "x" + count + ":\n");
 
 total = 0;
 i = count;
+memo = await getFib(memoizee);
 while (i--) {
-	memo = getFib(memoizee);
 	time = now();
 	memo(index);
 	total += now() - time;
@@ -58,8 +57,8 @@ data["Memoizee (object mode)"] = total;
 
 total = 0;
 i = count;
+memo = await getFib(memoizee, { primitive: true });
 while (i--) {
-	memo = getFib(memoizee, { primitive: true });
 	time = now();
 	memo(index);
 	total += now() - time;
@@ -68,8 +67,8 @@ data["Memoizee (primitive mode)"] = total;
 
 total = 0;
 i = count;
+memo = await getFib(underscore);
 while (i--) {
-	memo = getFib(underscore);
 	time = now();
 	memo(index);
 	total += now() - time;
@@ -78,8 +77,8 @@ data.Underscore = total;
 
 total = 0;
 i = count;
+memo = await getFib(lodash);
 while (i--) {
-	memo = getFib(lodash);
 	time = now();
 	memo(index);
 	total += now() - time;
@@ -88,8 +87,8 @@ data["Lo-dash"] = total;
 
 total = 0;
 i = count;
+memo = await getFib(memoizee, { primitive: true, max: lruMax });
 while (i--) {
-	memo = getFib(memoizee, { primitive: true, max: lruMax });
 	time = now();
 	memo(index);
 	total += now() - time;
@@ -98,8 +97,8 @@ data["Memoizee (primitive mode) LRU (max: 1000)"] = total;
 
 total = 0;
 i = count;
+memo = await getFib(memoizee, { max: lruMax });
 while (i--) {
-	memo = getFib(memoizee, { max: lruMax });
 	time = now();
 	memo(index);
 	total += now() - time;
@@ -108,8 +107,8 @@ data["Memoizee (object mode)    LRU (max: 1000)"] = total;
 
 total = 0;
 i = count;
+lruObj = new lruCache.LRUCache({ max: lruMax });
 while (i--) {
-	lruObj = lruCache({ max: lruMax });
 	time = now();
 	lru(index);
 	total += now() - time;
@@ -118,8 +117,8 @@ data["lru-cache                 LRU (max: 1000)"] = total;
 
 total = 0;
 i = count;
+lruObj = new lruSecondaryCache(lruMax);
 while (i--) {
-	lruObj = lruSecondary(lruMax);
 	time = now();
 	lru(index);
 	total += now() - time;
@@ -131,6 +130,7 @@ forEach(
 	function (value, name, obj, currentIndex) {
 		console.log(currentIndex + 1 + ":", pad.call(value, " ", 5) + "ms ", name);
 	},
-	null,
-	function (a, b) { return this[a] - this[b]; }
+	function (a, b) {
+		return this[a] - this[b];
+	},
 );
